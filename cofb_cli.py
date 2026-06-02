@@ -95,9 +95,8 @@ class Database:
 
     def usuario(self, usuario):
         self.cursor.execute("""
-            UPDATE finanzas 
-            SET user = ? 
-            WHERE id = 1
+            REPLACE INTO finanzas (id, user)
+            VALUES (1, ?)
         """, (usuario,))
         self.conexion.commit()
 
@@ -218,15 +217,13 @@ def limpiar():
         os.system('clear')
 def main(db, op):
     limpiar()
-    if not db.comp_usuario():
-        usuario = db.ver_usuario()
-    else:
+    if db.comp_usuario():
         usuario = input("ingresa tu nombre: ")
         db.usuario(usuario)
     while True:
         limpiar()
         print("~" * 50)
-        print(f"\nBIENVENIDO A LA CALCULADORA DE FINANZAS {usuario}")
+        print(f"\nBIENVENIDO A LA CALCULADORA DE FINANZAS {db.ver_usuario()}")
         print("\nque quieres hacer?")
         print("""\n
 1 = registrar movimiento 
