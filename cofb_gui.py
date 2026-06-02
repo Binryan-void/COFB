@@ -21,7 +21,7 @@ import os
 import pandas as pd
 import re
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 
 class Database:
     def __init__(self, carpeta):
@@ -138,23 +138,35 @@ class Ventana:
 
 
     @staticmethod
-    def fechas(anio, mes, boton):
+    def fechas(anio, mes):
         try:
             anio = int(anio) 
             mes = int(mes)
         except ValueError:
             messagebox.showerror("Error", "Ingresa solo numeros enteros \nVuelve a intentarlo")
+            return None, None
         else:
             if mes > 12 or mes < 1:
                 messagebox.showerror("Error", f"Ingresaste {mes} \nIngresa solo numeros entre 1 y 12")
             else:
-                boton.destroy()
                 inicio = date(anio, mes, 1)
                 if mes == 12:
                     fin = date(anio + 1, 1, 1)
                 else:
                     fin = date(anio, mes + 1, 1)
                 return inicio, fin
+
+
+    @staticmethod
+    def scrollable(root):
+        frame = ttk.Frame(root)
+        frame.pack(padx=10, pady=10, fill="both", expand=True)
+        scrollbar = ttk.Scrollbar(frame, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
+        txt_scrollable = tk.Text(frame, wrap="word", yscrollcommand=scrollbar.set)
+        txt_scrollable.pack(side="left", fill="both", expand=True)
+        scrollbar.config(command=txt_scrollable.yview)
+        return txt_scrollable
 
 
     def obtener_root(self):
@@ -294,7 +306,7 @@ class Ventana:
 
         self.db.insertar(hoy, monto, descripcion)
         volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.BOTTOM, pady=(50, 10), padx=(40, 5))
+        volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
 
 
     def ver_todo(self):
@@ -307,12 +319,14 @@ class Ventana:
         self.continuar.set(False)
         def volver():
             self.continuar.set(True)
+        
         filas = self.db.ver_todos()
+        dato = Ventana.scrollable(self.root)
         for fila in filas:
-            datos = tk.Label(self.root, text=fila, font=("Arial", 12))
-            datos.pack(pady=10)
+            dato.insert("end", f"{fila}\n")
+        dato.config(state="disabled")
         volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.BOTTOM, pady=(50, 10), padx=(40, 5))
+        volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
 
 
     def ver_fecha(self):
@@ -342,11 +356,12 @@ class Ventana:
         self.enviar.destroy()
         fecha = self.fecha.get().strip()
         filas = self.db.ver_fechas(fecha)
+        dato = Ventana.scrollable(self.root)
         for fila in filas:
-            dato = tk.Label(self.root, text=fila, font=("Arial", 12))
-            dato.pack(pady=10)
+            dato.insert("end", f"{fila}\n")
+        dato.config(state="disabled")
         volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.BOTTOM, pady=(50, 10), padx=(40, 5))
+        volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
 
 
     def ver_mes(self):
@@ -376,14 +391,21 @@ class Ventana:
         def volver():
             self.continuar.set(True)
 
-        inicio, fin = Ventana.fechas(self.anio.get().strip(), self.mes.get().strip(), self.enviar)
-        filas = self.db.ver_meses(inicio, fin)
-        for fila in filas:
-            dato = tk.Label(self.root, text=fila, font=("Arial", 12))
-            dato.pack(pady=10)
+        anio = self.anio.get().strip()
+        mes = self.mes.get().strip()
 
-        volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.BOTTOM, pady=(50, 10), padx=(40, 5))
+        inicio, fin = Ventana.fechas(anio, mes)
+        if inicio is None:
+            self.ver_mes()
+        else:
+            filas = self.db.ver_meses(inicio, fin)
+            dato = Ventanas.scrollable(self.root)
+            for fila in filas:
+                dato.insert("end", f"{fila}\n")
+            dato.config(state="disable")
+    
+            volver_menu = tk.Button(self.root, text="Continuar", command=volver)
+            volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
 
 
     def total_mes(self):
@@ -413,12 +435,17 @@ class Ventana:
         def volver():
             self.continuar.set(True)
 
-        inicio,  fin = Ventana.fechas(self.anio.get().strip(), self.mes.get().strip(), self.enviar)
-        total = self.db.mes_total(inicio, fin)
-        dato = tk.Label(self.root, text=total, font=("Arial", 12))
-        dato.pack(pady=10)
-        volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.BOTTOM, pady=(50, 10), padx=(40, 5))
+        anio = self.anio.get().strip()
+        mes = self.mes.get().strip()
+        inicio,  fin = Ventana.fechas(anio, mes)
+        if inicio is None:
+            self.total_mes()
+        else:
+            total = self.db.mes_total(inicio, fin)
+            dato = tk.Label(self.root, text=total, font=("Arial", 12))
+            dato.pack(pady=10)
+            volver_menu = tk.Button(self.root, text="Continuar", command=volver)
+            volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
 
 
     def excel(self):
@@ -495,10 +522,11 @@ class Ventana:
         
 
     def obtener_user(self):
+        self.limpiar_pantalla()
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
         menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="", menu=menu)
+        menubar.add_cascade(label="Ingresar usuario", menu=menu)
         self.continuar.set(False)
 
         pedir_usuario = tk.Label(self.root, text="ingresa tu nombre de usuario", font=("Arial", 12))
@@ -520,6 +548,7 @@ class Ventana:
 def main(base, vn):
     if base.comp_usuario():
        vn.obtener_user()
+       vn.root.wait_variable(vn.continuar)
 
     while True:
         seleccion = vn.menu()
