@@ -339,7 +339,7 @@ class Ventana:
 
         pedir_fecha = tk.Label(self.root, text="Ingresa la fecha de la que quieres los movimientos", font=("Arial", 12))
         pedir_fecha.pack(pady=10)
-        ejemplo = tk.Label(self.root, text="Ejemplo: 2026-06-4", font=("Arial", 12))
+        ejemplo = tk.Label(self.root, text="Ejemplo: 2026-06-04", font=("Arial", 12))
         ejemplo.pack(pady=10)
         self.fecha = tk.Entry(self.root)
         self.fecha.pack(pady=10)
@@ -494,9 +494,9 @@ class Ventana:
         preguntar = tk.Label(self.root, text="Quieres cambiarlo?", font=("Arial", 12))
         preguntar.pack(pady=10)
         self.si = tk.Button(self.root, text="Si", command=self.usr_cambiar)
-        self.si.pack(side="left", pady=10, padx=10)
+        self.si.pack(side=tk.TOP, pady=20, padx=10)
         self.no = tk.Button(self.root, text="No", command=volver)
-        self.no.pack(side="left", pady=10, padx=10)
+        self.no.pack(side=tk.TOP, pady=20, padx=10)
 
 
     def usr_cambiar(self):
