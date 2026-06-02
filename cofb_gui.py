@@ -100,9 +100,8 @@ class Database:
 
     def usuario(self, usuario):
         self.cursor.execute("""
-            UPDATE finanzas 
-            SET user = ? 
-            WHERE id = 1
+            REPLACE INTO finanzas (id, user)
+            VALUES (1, ?)
         """, (usuario,))
         self.conexion.commit()
         messagebox.showinfo("Exito", f"Se ha guardado el nombre de usuario \nTu usuario es {usuario}")
@@ -535,7 +534,6 @@ class Ventana:
         self.user.pack(pady=10)
         self.aceptar = tk.Button(self.root, text="Aceptar", command=self.obt_usr_guardar)
         self.aceptar.pack(pady=10)
-        self.regresar()
 
 
     def obt_usr_guardar(self):
@@ -548,7 +546,7 @@ class Ventana:
 def main(base, vn):
     if base.comp_usuario():
        vn.obtener_user()
-       vn.root.wait_variable(vn.continuar)
+       vn.regresar()
 
     while True:
         seleccion = vn.menu()
