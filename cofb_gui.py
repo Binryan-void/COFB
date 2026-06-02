@@ -277,9 +277,9 @@ class Ventana:
         confirmacion = tk.Label(self.root, text=f"Ingresaste {self.monto.get()}", font=("Arial", 12))
         confirmacion.pack(pady=10)
         self.aceptar = tk.Button(self.root, text="Aceptar", command=self.mov_descripcion)
-        self.aceptar.pack(side="left", padx=10, pady=10)
+        self.aceptar.pack(side=tk.TOP, padx=50, pady=10)
         self.volver = tk.Button(self.root, text="Volver", command=self.mov_monto)
-        self.volver.pack(side="left", padx=10, pady=10)
+        self.volver.pack(side=tk.TOP, padx=50, pady=10)
 
 
     def mov_descripcion(self):
@@ -305,7 +305,7 @@ class Ventana:
 
         self.db.insertar(hoy, monto, descripcion)
         volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
+        volver_menu.pack(side=tk.TOP, pady=20, padx=10)
 
 
     def ver_todo(self):
@@ -325,7 +325,7 @@ class Ventana:
             dato.insert("end", f"{fila}\n")
         dato.config(state="disabled")
         volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
+        volver_menu.pack(side=tk.BOTTOM, pady=20, padx=10)
 
 
     def ver_fecha(self):
@@ -360,7 +360,7 @@ class Ventana:
             dato.insert("end", f"{fila}\n")
         dato.config(state="disabled")
         volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
+        volver_menu.pack(side=tk.TOP, pady=20, padx=10)
 
 
     def ver_mes(self):
@@ -404,7 +404,7 @@ class Ventana:
             dato.config(state="disable")
     
             volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-            volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
+            volver_menu.pack(side=tk.TOP, pady=(50, 30), padx=(40, 5))
 
 
     def total_mes(self):
@@ -444,7 +444,7 @@ class Ventana:
             dato = tk.Label(self.root, text=total, font=("Arial", 12))
             dato.pack(pady=10)
             volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-            volver_menu.pack(side=tk.BOTTOM, pady=(50, 30), padx=(40, 5))
+            volver_menu.pack(side=tk.TOP, pady=20, padx=10)
 
 
     def excel(self):
@@ -466,9 +466,9 @@ class Ventana:
         preguntar = tk.Label(self.root, text="Quieres Pasar Los Datos A Excel?", font=("Arial", 12))
         preguntar.pack(pady=10)
         volver_menu = tk.Button(self.root, text="Volver", command=volver)
-        volver_menu.pack(side="left", pady=10, padx=10)
+        volver_menu.pack(side=tk.TOP, pady=10, padx=50)
         crear_excel = tk.Button(self.root, text="Crear Excel", command=conectar_excel)
-        crear_excel.pack(side="left", pady=10, padx=10)
+        crear_excel.pack(side=tk.TOP, pady=10, padx=50)
 
 
     def cambiar_usuario(self):
