@@ -16,7 +16,7 @@
 ##################################################################################
 
 import sqlite3
-from datetime import date
+from datetime import date, datetime
 import os
 import pandas as pd
 import re
@@ -348,19 +348,26 @@ class Ventana:
 
 
     def datos_fecha(self):
-        self.limpiar_pantalla()
         def volver():
             self.continuar.set(True)
     
         self.enviar.destroy()
-        fecha = self.fecha.get().strip()
-        filas = self.db.ver_fechas(fecha)
-        dato = Ventana.scrollable(self.root)
-        for fila in filas:
-            dato.insert("end", f"{fila}\n")
-        dato.config(state="disabled")
-        volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.TOP, pady=20, padx=10)
+        try:
+            fecha = self.fecha.get().strip()
+            fecha_valida = datetime.strptime(fecha, "%Y-%m-%d").date()
+            fecha_valida = str(fecha_valida)
+        except ValueError:
+            messagebox.showerror("Error", "formato o fecha invalida \nintenta nuevamente")
+            self.ver_fecha()
+        else:
+            self.limpiar_pantalla()
+            filas = self.db.ver_fechas(fecha_valida)
+            dato = Ventana.scrollable(self.root)
+            for fila in filas:
+                dato.insert("end", f"{fila}\n")
+            dato.config(state="disabled")
+            volver_menu = tk.Button(self.root, text="Continuar", command=volver)
+            volver_menu.pack(side=tk.TOP, pady=20, padx=10)
 
 
     def ver_mes(self):
@@ -386,19 +393,19 @@ class Ventana:
 
 
     def datos_mes(self):
-        self.limpiar_pantalla()
         def volver():
             self.continuar.set(True)
 
         anio = self.anio.get().strip()
         mes = self.mes.get().strip()
 
+        self.limpiar_pantalla()
         inicio, fin = Ventana.fechas(anio, mes)
         if inicio is None:
             self.ver_mes()
         else:
             filas = self.db.ver_meses(inicio, fin)
-            dato = Ventanas.scrollable(self.root)
+            dato = Ventana.scrollable(self.root)
             for fila in filas:
                 dato.insert("end", f"{fila}\n")
             dato.config(state="disable")
