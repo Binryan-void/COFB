@@ -269,12 +269,13 @@ class Ventana:
         self.monto.pack(pady=10)
         self.enviar = tk.Button(self.root, text="Enviar", command=validar_monto)
         self.enviar.pack(pady=10)
-        volver_menu = tk.Button(self.root, text="Volver al Menu", command=volver)
-        volver_menu.pack(side=tk.TOP, padx=20, pady=10)
+        self.volver_menu = tk.Button(self.root, text="Volver al Menu", command=volver)
+        self.volver_menu.pack(side=tk.TOP, padx=20, pady=10)
 
 
     def mov_confirmacion(self):
         self.enviar.destroy()
+        self.volver_menu.destroy()
 
         confirmacion = tk.Label(self.root, text=f"Ingresaste ${self.monto.get().strip()}", font=("Arial", 12))
         confirmacion.pack(pady=10)
