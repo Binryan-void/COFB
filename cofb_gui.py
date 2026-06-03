@@ -180,7 +180,7 @@ class Ventana:
     def obtener_root(self):
         root = tk.Tk()
         root.title("Control de Operaciones Financieras Basicas")
-        root.geometry("1000x500")
+        root.geometry("850x600")
         return root
 
 
