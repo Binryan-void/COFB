@@ -252,8 +252,6 @@ class Ventana:
 
         
     def mov_monto(self):
-        self.limpiar_pantalla()
-        
         def validar_monto():
             try:
                 float(self.monto.get())
@@ -262,6 +260,8 @@ class Ventana:
             else:
                 self.mov_confirmacion()
 
+        def volver():
+            self.continuar.set(True)
 
         pedir_monto = tk.Label(self.root, text="Ingresa el monto que quieres registrar:", font=("Arial", 12))
         pedir_monto.pack(pady=10)
@@ -269,12 +269,14 @@ class Ventana:
         self.monto.pack(pady=10)
         self.enviar = tk.Button(self.root, text="Enviar", command=validar_monto)
         self.enviar.pack(pady=10)
+        volver_menu = tk.Button(self.root, text="Volver al Menu", command=volver)
+        volver_menu.pack(side=tk.TOP, padx=20, pady=10)
 
 
     def mov_confirmacion(self):
         self.enviar.destroy()
 
-        confirmacion = tk.Label(self.root, text=f"Ingresaste {self.monto.get()}", font=("Arial", 12))
+        confirmacion = tk.Label(self.root, text=f"Ingresaste ${self.monto.get().strip()}", font=("Arial", 12))
         confirmacion.pack(pady=10)
         self.aceptar = tk.Button(self.root, text="Aceptar", command=self.mov_descripcion)
         self.aceptar.pack(side=tk.TOP, padx=50, pady=10)
