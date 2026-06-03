@@ -14,13 +14,22 @@
 # Deberias haber recibido una copia de la Licencia Publica General GNU 
 # junto con este programa. Si no es asi, consulta <https://www.gnu.org/licenses/>.
 ##################################################################################
-
-import sqlite3
-from datetime import date
-import os
-import time
-import pandas as pd
-import re
+try:
+    import sqlite3
+    from datetime import date
+    import os
+    import time
+    import pandas as pd
+    import re
+except ModuleNotFoundError:
+    print("""ERROR, primero activa el entorno virtual
+Si seguiste las instruccionoes puedes activarlo con:
+source env/bin/activate
+si usas windows usa:
+call .\\env\\Scripts\\activate
+en CMD o 
+.\\env\\Scripts\\Activate.ps1
+en Powershell""")
 
 class Database:
     def __init__(self, carpeta):
