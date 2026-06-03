@@ -235,7 +235,7 @@ def main(db, op):
     while True:
         limpiar()
         print("~" * 50)
-        print(f"\nBIENVENIDO A LA CALCULADORA DE FINANZAS {db.ver_usuario()}")
+        print(f"\nBIENVENIDO A COFB {db.ver_usuario()}")
         print("\nque quieres hacer?")
         print("""\n
 1 = registrar movimiento 

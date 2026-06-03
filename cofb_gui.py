@@ -208,7 +208,7 @@ class Ventana:
         menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Menu Principal", menu=menu)
 
-        bienvenida = tk.Label(self.root, text=f"BIENVENIDO A LA CALCULADORA DE FINANZAS {self.db.ver_usuario()}", font=("Arial", 15))
+        bienvenida = tk.Label(self.root, text=f"BIENVENIDO A COFB {self.db.ver_usuario()}", font=("Arial", 15))
         bienvenida.pack(pady=10)
         pregunta = tk.Label(self.root, text="que quieres hacer", font=("Arial", 12))
         pregunta.pack(pady=15)
