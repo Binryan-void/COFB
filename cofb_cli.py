@@ -51,7 +51,9 @@ class Database:
 
 
     def insertar(self, fecha, dinero, descripcion):
-        if not isinstance(fecha, date) or not isinstance(dinero, float) or not isinstance(descripcion, str):
+        if (not isinstance(fecha, date) 
+        or not isinstance(dinero, float) 
+        or not isinstance(descripcion, str)):
             raise ValueError("El formato de los datos es incorrecto")
         
         try:
@@ -82,7 +84,8 @@ class Database:
 
     def mes_total(self, inicio, fin):
         self.cursor.execute("SELECT SUM(monto) FROM finanzas WHERE fecha >= ? AND fecha < ?", (str(inicio), str(fin)))
-        total = self.cursor.fetchone()[0] or -0 
+        total_res = self.cursor.fetchone()[0] or -0 
+        total = total_res if total_res is not None else 0.0
         return total
 
 
