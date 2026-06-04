@@ -48,7 +48,7 @@ para ejecutar el programa solo ejecuta esto:
 * **Windows:** ``call .\env\Scripts\activate`` en **CMD** o ``.\env\Scripts\Activate.ps1`` en **PowerShell**
 * **Windows:** ``python cofb_cli.py``
 ### extra:
-se esta trabajando en una version del programa GUI (interfaz grafica)
+hay una versión del programa GUI (interfaz grafica)
 para ejecutar la version GUI haz lo siguiente:
 * **NOTA:** esta version solo se puede ejecutar en computadora
 *deberas hacer lo mismo que para ejecutar la version de terminal dependiendo tu sistema y para ejecutar usa el comando:* ``python3 cofb_gui.py`` para **Linux y MacOS** y ``python cofb_gui.py`` en **Windows**
