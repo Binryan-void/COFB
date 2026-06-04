@@ -27,7 +27,7 @@ si te gustaria utilizar el programa en un dispositivo movil (Android o Iphone) s
 - instala el programa **Termux** en **Android** o **ISH Shell** en **Iphone**
     * puedes instalar **Termux** haciendo click [aquí](https://f-droid.org/repo/com.termux_1022.apk) **NOTA:** ***NO DESCARGAR DESDE LA PLAY STORE***
     * puedes descargar **ISH Shell** desde la **App Store**
-* ejecuta ``pkg update`` en **Termux** y ``apk update`` en **ISH Shell**
+* ejecuta ``pkg update && termux setup storage`` en **Termux** y ``apk update`` en **ISH Shell**
 ### descargar repositorio:
 para descargar este repositorio deberás tener instalado git, puedes instalarlo asi:
 * **Android:** ``pkg install git``
@@ -47,6 +47,9 @@ para ejecutar el programa solo ejecuta esto:
 * **Android/IOS/Linux/Macos:** ``. env/bin/activate && python3 cofb_cli.py``
 * **Windows:** ``call .\env\Scripts\activate`` en **CMD** o ``.\env\Scripts\Activate.ps1`` en **PowerShell**
 * **Windows:** ``python cofb_cli.py``
+* **NOTA:** si en la versión de Android crea el archivo de excel paselo al almacenamiento interno con el siguiente comando: 
+``mv finanzas.xlsx storage/shared``
+* **IOS:** en iPhone lo puede ver desde su explorador de archivos
 ### extra:
 hay una versión del programa GUI (interfaz grafica)
 para ejecutar la version GUI haz lo siguiente:
