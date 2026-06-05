@@ -235,7 +235,7 @@ def main(db, op):
         db.usuario(usuario)
     while True:
         limpiar()
-        print("~" * 50)
+        print("\033[0m" + "~" * 50)
         print(f"\n\033[1mBIENVENIDO A COFB {db.ver_usuario()}")
         print("\n\033[0mque quieres hacer?")
         print("""\n
@@ -255,7 +255,7 @@ def main(db, op):
         print("~" * 50, "\n")
         if modo == '1':
             op.movimiento()
-            print("\033[32mExito, movimiento registrado")
+            print("\033[32mExito, movimiento registrado\033[0m")
         elif modo == '2':
             op.ver_todo()
         elif modo == '3':
