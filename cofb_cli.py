@@ -237,7 +237,7 @@ def main(db, op):
         limpiar()
         print("\033[0m" + "~" * 46)
         with open ("name.txt", "r") as f:
-            print(f.read())
+            print(f"\n{f.read()}")
         print(f"\n\033[0m\033[1mBIENVENIDO A COFB {db.ver_usuario()}")
         print("\n\033[0mque quieres hacer?")
         print("""\n
