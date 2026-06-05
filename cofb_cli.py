@@ -235,8 +235,10 @@ def main(db, op):
         db.usuario(usuario)
     while True:
         limpiar()
-        print("\033[0m" + "~" * 50)
-        print(f"\n\033[1mBIENVENIDO A COFB {db.ver_usuario()}")
+        print("\033[0m" + "~" * 46)
+        with open ("name.txt", "r") as f:
+            print(f.read())
+        print(f"\n\033[0m\033[1mBIENVENIDO A COFB {db.ver_usuario()}")
         print("\n\033[0mque quieres hacer?")
         print("""\n
 1 = registrar movimiento 
@@ -248,11 +250,11 @@ def main(db, op):
 7 = cambiar usuario
 0 = salir""")
         print()
-        print("~" * 50)
+        print("~" * 46)
         modo = input("\n--> ")
         time.sleep(0.4)
         limpiar()
-        print("~" * 50, "\n")
+        print("~" * 46, "\n")
         if modo == '1':
             op.movimiento()
             print("\033[32mExito, movimiento registrado\033[0m")
@@ -273,7 +275,7 @@ def main(db, op):
         else:
             print("\033[31mError, \033[1mopcion no disponible")
         print()
-        print("\033[0m" +"~" * 50)
+        print("\033[0m" +"~" * 46)
         input("\npresiona Enter para continuar")
 
 
