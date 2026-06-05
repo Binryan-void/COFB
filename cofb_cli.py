@@ -273,7 +273,7 @@ def main(db, op):
         else:
             print("\033[31mError, \033[1mopcion no disponible")
         print()
-        print("~" * 50)
+        print("\033[0m" +"~" * 50)
         input("\npresiona Enter para continuar")
 
 
