@@ -14,6 +14,7 @@
 # Deberias haber recibido una copia de la Licencia Publica General GNU 
 # junto con este programa. Si no es asi, consulta <https://www.gnu.org/licenses/>.
 ##################################################################################
+import sys
 try:
     import sqlite3
     from datetime import date
@@ -22,14 +23,15 @@ try:
     import pandas as pd
     import re
 except ModuleNotFoundError:
-    print("""ERROR, primero activa el entorno virtual
-Si seguiste las instruccionoes puedes activarlo con:
-source env/bin/activate
-si usas windows usa:
-call .\\env\\Scripts\\activate
-en CMD o 
-.\\env\\Scripts\\Activate.ps1
-en Powershell""")
+    print("""\033[31m[!] ERROR, \033[0m\033[1mprimero activa el entorno virtual
+\033[0mSi seguiste las instruccionoes puedes activarlo con:
+\033[4msource env/bin/activate
+\033[0msi usas windows usa:
+\033[4mcall .\\env\\Scripts\\activate
+\033[0men CMD o 
+\033[4m.\\env\\Scripts\\Activate.ps1
+\033[0men Powershell""")
+    sys.exit(1)
 
 class Database:
     def __init__(self, carpeta):
@@ -63,14 +65,14 @@ class Database:
         if (not isinstance(fecha, date) 
         or not isinstance(dinero, float) 
         or not isinstance(descripcion, str)):
-            raise ValueError("El formato de los datos es incorrecto")
+            raise ValueError("\033[31mEl formato de los datos es incorrecto")
         
         try:
             self.cursor.execute("INSERT INTO finanzas (fecha, monto, descripcion) VALUES (?, ?, ?)", (str(fecha), dinero, descripcion))
             self.conexion.commit()
         except sqlite3.IntegrityError as e:
             print(e)
-            raise ValueError("Ya existe un registro con esa fecha")
+            raise ValueError("\033[31mYa existe un registro con esa fecha")
 
 
     def ver_todos(self):
@@ -148,12 +150,12 @@ class Operaciones:
             except ValueError:
                 limpiar()
                 print("~" * 50)
-                print("ERROR, vuelve a intentarlo\n")
+                print("\033[31mERROR, \033[1mvuelve a intentarlo\n")
             else:
                 if mes > 12 or mes < 1:
                     limpiar()
-                    print(f"ERROR, ingresaste el mes {mes}")
-                    print("ingresa solo numeros del 1 al 12")
+                    print(f"\033[31mERROR, \033[1mingresaste el mes {mes}")
+                    print("\033[0mingresa solo numeros del 1 al 12")
                     time.sleep(1.2)
                     continue
                 else:
@@ -172,7 +174,7 @@ class Operaciones:
                 try:
                     monto = float(input("ingresa el monto que quieres registrar: \n--> "))
                 except ValueError:
-                    print("ERROR, ingresa solo numeros")
+                    print("\033[31mERROR, \033[1mingresa solo numeros")
                 else:
                     break
             confirmacion = input(f"ingresaste ${monto}, es correcto? (s/n) ")
@@ -219,7 +221,6 @@ class Operaciones:
             usuario = input("ingresa tu nuevo usuario: ")
             self.base.usuario(usuario)
         print(f"nombre de usuario cambiado exitosamente a: {self.base.ver_usuario()}")
-        print("para ver los cambios vuelva a iniciar el programa")
 
 
 def limpiar():
@@ -230,13 +231,13 @@ def limpiar():
 def main(db, op):
     limpiar()
     if db.comp_usuario():
-        usuario = input("ingresa tu nombre: ")
+        usuario = input("\033[4mingresa tu nombre: ")
         db.usuario(usuario)
     while True:
         limpiar()
         print("~" * 50)
-        print(f"\nBIENVENIDO A COFB {db.ver_usuario()}")
-        print("\nque quieres hacer?")
+        print(f"\n\033[1mBIENVENIDO A COFB {db.ver_usuario()}")
+        print("\n\033[0mque quieres hacer?")
         print("""\n
 1 = registrar movimiento 
 2 = ver todos los movimientos 
@@ -254,7 +255,7 @@ def main(db, op):
         print("~" * 50, "\n")
         if modo == '1':
             op.movimiento()
-            print("movimiento registrado")
+            print("\033[32mExito, movimiento registrado")
         elif modo == '2':
             op.ver_todo()
         elif modo == '3':
@@ -270,7 +271,7 @@ def main(db, op):
         elif modo == '0':
             break
         else:
-            print("opcion no disponible")
+            print("\033[31mError, \033[1mopcion no disponible")
         print()
         print("~" * 50)
         input("\npresiona Enter para continuar")

@@ -14,6 +14,7 @@
 # Deberias haber recibido una copia de la Licencia Publica General GNU 
 # junto con este programa. Si no es asi, consulta <https://www.gnu.org/licenses/>.
 ##################################################################################
+import sys
 try:
     import sqlite3
     from datetime import date, datetime
@@ -23,14 +24,15 @@ try:
     import tkinter as tk
     from tkinter import messagebox, ttk
 except ModuleNotFoundError:
-    print("""ERROR, primero activa el entorno virtual
-Si seguiste las instruccionoes puedes activarlo con:
-source env/bin/activate
-si usas windows usa:
-call .\\env\\Scripts\\activate
-en CMD o 
-.\\env\\Scripts\\Activate.ps1
-en Powershell""")
+    print("""\033[31m[!] ERROR, \033[0m\033[1mprimero activa el entorno virtual
+\033[0mSi seguiste las instruccionoes puedes activarlo con:   
+\033[4msource env/bin/activate
+\033[0msi usas windows usa:
+\033[4mcall .\\env\\Scripts\\activate 
+\033[0men CMD o
+\033[4m.\\env\\Scripts\\Activate.ps1
+\033[0men Powershell""")
+    sys.exit(1)
 
 class Database:
     def __init__(self, carpeta):
