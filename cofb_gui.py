@@ -39,7 +39,6 @@ class Database:
         self.carpeta = carpeta
         self.conexion = None
         self.cursor = None
-        self.conectar()
         self.tabla()
 
 
@@ -62,19 +61,22 @@ class Database:
         ''')
 
 
-    def insertar(self, fecha, dinero, descripcion):
+    def insertar(self, fecha, dinero, descripcion) -> bool:
         if (not isinstance(fecha, date) 
             or not isinstance(dinero, float) 
             or not isinstance(descripcion, str)
         ):
             messagebox.showerror("Error de Formato", "El formato de los datos es incorrecto")
+            return False
         
         try:
             self.cursor.execute("INSERT INTO finanzas (fecha, monto, descripcion) VALUES (?, ?, ?)", (str(fecha), dinero, descripcion))
             self.conexion.commit()
             messagebox.showinfo("Exito", "Movimiento registrado exitosamente")
         except sqlite3.IntegrityError as e:
-            messagebox.showerror("Error de Duplicado", f"Ocurrio un error de duplicado de los datos \nEl error es {e}")
+            messagebox.showerror("Error de Duplicado", f"Ocurrio un error de duplicado de los datos \nEl error es: {e}")
+            return False
+        return True
 
     def ver_todos(self):
         self.cursor.execute("SELECT * FROM finanzas")
@@ -322,9 +324,11 @@ class Ventana:
         descripcion = self.descripcion.get().strip()
         hoy = date.today()
 
-        self.db.insertar(hoy, monto, descripcion)
-        volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.TOP, pady=20, padx=10)
+        if (self.db.insertar(hoy, monto, descripcion)):
+            volver_menu = tk.Button(self.root, text="Continuar", command=volver)
+            volver_menu.pack(side=tk.TOP, pady=20, padx=10)
+        else:
+            self.movimiento()
 
 
     def ver_todo(self) -> None:
@@ -427,7 +431,7 @@ class Ventana:
             dato = Ventana.scrollable(self.root)
             for fila in filas:
                 dato.insert("end", f"{fila}\n")
-            dato.config(state="disable")
+            dato.config(state="disabled")
     
             volver_menu = tk.Button(self.root, text="Continuar", command=volver)
             volver_menu.pack(side=tk.TOP, pady=(50, 30), padx=(40, 5))
