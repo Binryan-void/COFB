@@ -235,8 +235,11 @@ def main(db, op):
     while True:
         limpiar()
         print("\033[0m" + "~" * 46)
-        with open ("name.txt", "r") as f:
-            print(f"\n{f.read()}")
+        try:
+            with open ("name.txt", "r") as f:
+                print(f"\n{f.read()}")
+        except FileNotFoundError:
+            print()
         print(f"\n\033[0m\033[1mBIENVENIDO A COFB {db.ver_usuario()}")
         print("\n\033[0mque quieres hacer?")
         print("""\n
@@ -255,8 +258,11 @@ def main(db, op):
         limpiar()
         print("~" * 46, "\n")
         if modo == '1':
-            op.movimiento()
-            print("\033[32mExito, movimiento registrado\033[0m")
+            try:
+                op.movimiento()
+                print("\033[32mExito, movimiento registrado\033[0m")
+            except ValueError as e:
+                print(e)
         elif modo == '2':
             op.ver_todo()
         elif modo == '3':
