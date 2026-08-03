@@ -34,22 +34,21 @@ except ModuleNotFoundError:
     sys.exit(1)
 
 class Database:
-    def __init__(self, carpeta):
+    def __init__(self, carpeta) -> None:
         self.carpeta = carpeta
         self.conexion = None
         self.cursor = None
-        self.conectar()
         self.tabla()
 
 
-    def conectar(self):
+    def conectar(self) -> None:
         if not os.path.exists(self.carpeta):
             os.makedirs(self.carpeta)
         self.conexion = sqlite3.connect(os.path.join(self.carpeta, 'finanzas.db'))
         self.cursor = self.conexion.cursor()
 
 
-    def tabla(self):
+    def tabla(self) -> None:
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS finanzas (
             id INTEGER PRIMARY KEY,
@@ -61,7 +60,7 @@ class Database:
         ''')
 
 
-    def insertar(self, fecha, dinero, descripcion):
+    def insertar(self, fecha, dinero, descripcion) -> None:
         if (not isinstance(fecha, date) 
         or not isinstance(dinero, float) 
         or not isinstance(descripcion, str)):
@@ -93,21 +92,21 @@ class Database:
         return filas
 
 
-    def mes_total(self, inicio, fin):
+    def mes_total(self, inicio, fin) -> float:
         self.cursor.execute("SELECT SUM(monto) FROM finanzas WHERE fecha >= ? AND fecha < ?", (str(inicio), str(fin)))
         total_res = self.cursor.fetchone()[0] or -0 
         total = total_res if total_res is not None else 0.0
         return total
 
 
-    def excel(self):
+    def excel(self) -> None:
         data = pd.read_sql_query("SELECT * FROM finanzas", self.conexion)
         for col in data.select_dtypes(include=['object']):
             data[col] = data[col].apply(lambda x: re.sub(r'[\x00-\x1f\x7f-\x9f]', '', str(x)) if x else x)
         data.to_excel('finanzas.xlsx', index=False, engine='openpyxl')
 
 
-    def usuario(self, usuario):
+    def usuario(self, usuario) -> None:
         self.cursor.execute("""
             REPLACE INTO finanzas (id, user)
             VALUES (1, ?)
@@ -115,7 +114,7 @@ class Database:
         self.conexion.commit()
 
 
-    def ver_usuario(self):
+    def ver_usuario(self) -> str:
         self.cursor.execute("SELECT user FROM finanzas WHERE id = 1")
         usuario = self.cursor.fetchone()
         if usuario:
@@ -123,7 +122,7 @@ class Database:
         return ""
 
 
-    def comp_usuario(self):
+    def comp_usuario(self) -> bool:
         self.cursor.execute("SELECT 1 FROM finanzas WHERE id = 1")
         resultado = self.cursor.fetchone()
         if resultado is None or resultado[0] is None or resultado[0] == '':
@@ -132,7 +131,7 @@ class Database:
             return False
 
 
-    def cerrar(self):
+    def cerrar(self) -> None:
         self.conexion.close()
 
 
@@ -168,7 +167,7 @@ class Operaciones:
         return inicio, fin
 
 
-    def movimiento(self):
+    def movimiento(self) -> None:
         while True:
             while True:
                 try:
@@ -188,33 +187,33 @@ class Operaciones:
         self.base.insertar(fecha, monto, descripcion)
 
 
-    def ver_todo(self):
+    def ver_todo(self) -> None:
         filas = self.base.ver_todos()
         for fila in filas:
             print(fila)
 
 
-    def ver_fecha(self):
+    def ver_fecha(self) -> None:
         dia = input("ingresa la fecha de la que quieres conocer los movimientos \nejemplo: 2026-03-21 \n--> ")
         filas = self.base.ver_fechas(dia)
         for fila in filas:
             print(fila)
 
 
-    def ver_mes(self):
+    def ver_mes(self) -> None:
         inicio, fin = Operaciones.fechas()
         filas = self.base.ver_meses(inicio, fin)
         for fila in filas:
             print(fila)
 
 
-    def total_mes(self):
+    def total_mes(self) -> None:
         inicio, fin = Operaciones.fechas()
         total = self.base.mes_total(inicio, fin)
         print(f"${total}")
 
 
-    def camb_user(self):
+    def camb_user(self) -> None:
         print(f"tu usuario actual es {self.base.ver_usuario()}")
         confirmacion = input("quieres cambiarlo? (s/n) ")
         if confirmacion == 's':
@@ -236,8 +235,11 @@ def main(db, op):
     while True:
         limpiar()
         print("\033[0m" + "~" * 46)
-        with open ("name.txt", "r") as f:
-            print(f"\n{f.read()}")
+        try:
+            with open ("name.txt", "r") as f:
+                print(f"\n{f.read()}")
+        except FileNotFoundError:
+            print()
         print(f"\n\033[0m\033[1mBIENVENIDO A COFB {db.ver_usuario()}")
         print("\n\033[0mque quieres hacer?")
         print("""\n
@@ -256,8 +258,11 @@ def main(db, op):
         limpiar()
         print("~" * 46, "\n")
         if modo == '1':
-            op.movimiento()
-            print("\033[32mExito, movimiento registrado\033[0m")
+            try:
+                op.movimiento()
+                print("\033[32mExito, movimiento registrado\033[0m")
+            except ValueError as e:
+                print(e)
         elif modo == '2':
             op.ver_todo()
         elif modo == '3':

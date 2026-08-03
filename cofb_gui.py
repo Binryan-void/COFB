@@ -35,22 +35,21 @@ except ModuleNotFoundError:
     sys.exit(1)
 
 class Database:
-    def __init__(self, carpeta):
+    def __init__(self, carpeta) -> None:
         self.carpeta = carpeta
         self.conexion = None
         self.cursor = None
-        self.conectar()
         self.tabla()
 
 
-    def conectar(self):
+    def conectar(self) -> None:
         if not os.path.exists(self.carpeta):
             os.makedirs(self.carpeta)
         self.conexion = sqlite3.connect(os.path.join(self.carpeta, 'finanzas.db'))
         self.cursor = self.conexion.cursor()
 
 
-    def tabla(self):
+    def tabla(self) -> None:
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS finanzas (
             id INTEGER PRIMARY KEY,
@@ -62,19 +61,22 @@ class Database:
         ''')
 
 
-    def insertar(self, fecha, dinero, descripcion):
+    def insertar(self, fecha, dinero, descripcion) -> bool:
         if (not isinstance(fecha, date) 
             or not isinstance(dinero, float) 
             or not isinstance(descripcion, str)
         ):
             messagebox.showerror("Error de Formato", "El formato de los datos es incorrecto")
+            return False
         
         try:
             self.cursor.execute("INSERT INTO finanzas (fecha, monto, descripcion) VALUES (?, ?, ?)", (str(fecha), dinero, descripcion))
             self.conexion.commit()
             messagebox.showinfo("Exito", "Movimiento registrado exitosamente")
         except sqlite3.IntegrityError as e:
-            messagebox.showerror("Error de Duplicado", f"Ocurrio un error de duplicado de los datos \nEl error es {e}")
+            messagebox.showerror("Error de Duplicado", f"Ocurrio un error de duplicado de los datos \nEl error es: {e}")
+            return False
+        return True
 
     def ver_todos(self):
         self.cursor.execute("SELECT * FROM finanzas")
@@ -94,14 +96,14 @@ class Database:
         return filas
 
 
-    def mes_total(self, inicio, fin):
+    def mes_total(self, inicio, fin) -> float:
         self.cursor.execute("SELECT SUM(monto) FROM finanzas WHERE fecha >= ? AND fecha < ?", (str(inicio), str(fin)))
         total_res = self.cursor.fetchone()[0] or -0 
         total = total_res if total_res is not None else 0.0
         return total
 
 
-    def excel(self):
+    def excel(self) -> None:
         data = pd.read_sql_query("SELECT * FROM finanzas", self.conexion)
         for col in data.select_dtypes(include=['object']):
             data[col] = data[col].apply(lambda x: re.sub(r'[\x00-\x1f\x7f-\x9f]', '', str(x)) if x else x)
@@ -109,7 +111,7 @@ class Database:
         messagebox.showinfo("Exito", "El archivo se ha creado exitosamente")
 
 
-    def usuario(self, usuario):
+    def usuario(self, usuario) -> None:
         self.cursor.execute("""
             REPLACE INTO finanzas (id, user)
             VALUES (1, ?)
@@ -118,7 +120,7 @@ class Database:
         messagebox.showinfo("Exito", f"Se ha guardado el nombre de usuario \nTu usuario es {usuario}")
 
 
-    def ver_usuario(self):
+    def ver_usuario(self) -> str:
         self.cursor.execute("SELECT user FROM finanzas WHERE id = 1")
         usuario = self.cursor.fetchone()
         if usuario:
@@ -126,23 +128,27 @@ class Database:
         return ""
 
 
-    def comp_usuario(self):
-        self.cursor.execute("SELECT 1 FROM finanzas WHERE id = 1")
+    def comp_usuario(self) -> bool:
+        self.cursor.execute("SELECT user FROM finanzas WHERE id = 1")
         resultado = self.cursor.fetchone()
-        if resultado is None or resultado[0] is None or resultado[0] == '':
+        if (
+            resultado is None or
+            resultado[0] is None or
+            resultado[0] == ''
+        ):
             return True
         else:
             return False
 
 
-    def cerrar(self):
+    def cerrar(self) -> None:
         self.conexion.close()
 
 
 class Ventana:
-    def __init__(self, base_datos): 
+    def __init__(self, base_datos) -> None: 
         self.db = base_datos
-        self.root = self.obtener_root()
+        self.root = Ventana.obtener_root()
         self.seleccion = None
         self.continuar = tk.BooleanVar(value=False)
 
@@ -179,18 +185,19 @@ class Ventana:
         return txt_scrollable
 
 
-    def obtener_root(self):
+    @staticmethod
+    def obtener_root():
         root = tk.Tk()
         root.title("Control de Operaciones Financieras Basicas")
         root.geometry("850x600")
         return root
 
 
-    def regresar(self):
+    def regresar(self) -> None:
         self.root.wait_variable(self.continuar)
 
 
-    def limpiar_pantalla(self):
+    def limpiar_pantalla(self) -> None:
         for widget in self.root.winfo_children():
             widget.destroy()
         self.root.config(menu="")
@@ -251,7 +258,7 @@ class Ventana:
         return self.seleccion
 
 
-    def movimiento(self):
+    def movimiento(self) -> None:
         self.continuar.set(False)
         self.limpiar_pantalla()
         
@@ -262,7 +269,7 @@ class Ventana:
         self.mov_monto()
 
         
-    def mov_monto(self):
+    def mov_monto(self) -> None:
         def validar_monto():
             try:
                 float(self.monto.get())
@@ -284,7 +291,7 @@ class Ventana:
         self.volver_menu.pack(side=tk.TOP, padx=20, pady=10)
 
 
-    def mov_confirmacion(self):
+    def mov_confirmacion(self) -> None:
         self.enviar.destroy()
         self.volver_menu.destroy()
 
@@ -296,7 +303,7 @@ class Ventana:
         self.volver.pack(side=tk.TOP, padx=50, pady=10)
 
 
-    def mov_descripcion(self):
+    def mov_descripcion(self) -> None:
         self.aceptar.destroy()
         self.volver.destroy()
 
@@ -308,7 +315,7 @@ class Ventana:
         self.enviar.pack(pady=10)
 
 
-    def mov_registrar(self):
+    def mov_registrar(self) -> None:
         def volver():
             self.continuar.set(True)
 
@@ -317,12 +324,14 @@ class Ventana:
         descripcion = self.descripcion.get().strip()
         hoy = date.today()
 
-        self.db.insertar(hoy, monto, descripcion)
-        volver_menu = tk.Button(self.root, text="Continuar", command=volver)
-        volver_menu.pack(side=tk.TOP, pady=20, padx=10)
+        if (self.db.insertar(hoy, monto, descripcion)):
+            volver_menu = tk.Button(self.root, text="Continuar", command=volver)
+            volver_menu.pack(side=tk.TOP, pady=20, padx=10)
+        else:
+            self.movimiento()
 
 
-    def ver_todo(self):
+    def ver_todo(self) -> None:
         self.limpiar_pantalla()
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
@@ -406,7 +415,7 @@ class Ventana:
         self.enviar.pack(pady=10)
 
 
-    def datos_mes(self):
+    def datos_mes(self) -> None:
         def volver():
             self.continuar.set(True)
 
@@ -422,13 +431,13 @@ class Ventana:
             dato = Ventana.scrollable(self.root)
             for fila in filas:
                 dato.insert("end", f"{fila}\n")
-            dato.config(state="disable")
+            dato.config(state="disabled")
     
             volver_menu = tk.Button(self.root, text="Continuar", command=volver)
             volver_menu.pack(side=tk.TOP, pady=(50, 30), padx=(40, 5))
 
 
-    def total_mes(self):
+    def total_mes(self) -> None:
         self.limpiar_pantalla()
         self.continuar.set(False)
 
@@ -451,7 +460,7 @@ class Ventana:
         self.enviar.pack(pady=10)
 
 
-    def datos_total(self):
+    def datos_total(self) -> None:
         def volver():
             self.continuar.set(True)
 
@@ -468,7 +477,7 @@ class Ventana:
             volver_menu.pack(side=tk.TOP, pady=20, padx=10)
 
 
-    def excel(self):
+    def excel(self) -> None:
         self.limpiar_pantalla()
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
@@ -492,7 +501,7 @@ class Ventana:
         crear_excel.pack(side=tk.TOP, pady=10, padx=50)
 
 
-    def cambiar_usuario(self):
+    def cambiar_usuario(self) -> None:
         self.limpiar_pantalla()
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
@@ -513,7 +522,7 @@ class Ventana:
         self.no.pack(side=tk.TOP, pady=20, padx=10)
 
 
-    def usr_cambiar(self):
+    def usr_cambiar(self) -> None:
         self.si.destroy()
         self.no.destroy()
         
@@ -525,23 +534,23 @@ class Ventana:
         self.enviar.pack(pady=10)
 
 
-    def usr_guardar(self):
+    def usr_guardar(self) -> None:
         self.enviar.destroy()
         user = self.user.get().strip()
         self.db.usuario(user)
         self.continuar.set(True)
 
 
-    def salir(self):
+    def salir(self) -> None:
         self.db.cerrar()
         self.root.destroy()
 
 
-    def iniciar(self):
+    def iniciar(self) -> None:
         self.root.mainloop()
         
 
-    def obtener_user(self):
+    def obtener_user(self) -> None:
         self.limpiar_pantalla()
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
@@ -557,7 +566,7 @@ class Ventana:
         self.aceptar.pack(pady=10)
 
 
-    def obt_usr_guardar(self):
+    def obt_usr_guardar(self) -> None:
         self.aceptar.destroy()
         user = self.user.get().strip()
         self.db.usuario(user)
