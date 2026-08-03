@@ -1,2 +1,21 @@
-pandas
-openpyxl
+airdrop-ng==1.1
+airgraph-ng==1.1
+argcomplete==3.7.0
+Brotli==1.2.0
+certifi==2025.1.31
+charset-normalizer==3.4.4
+idna==3.11
+LibAppArmor==3.1.7
+libvirt-python==12.2.0
+mutagen==1.47.0
+pillow==12.3.0
+pycairo==1.27.0
+pycryptodomex==3.23.0
+PyGObject==3.56.2
+requests==2.34.2
+TBB @ file:///builddir/tbb-2023.1.0/build/python/python_build
+urllib3==2.7.0
+websockets==16.0
+wifite @ file:///home/biryan/repos/wifite2
+yt-dlp==2026.7.4
+yt-dlp-ejs==0.8.0
